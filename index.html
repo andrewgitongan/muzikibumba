@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recordings Catalog</title>
+</head>
+<body>
+    <h1>Audio Recordings</h1>
+    <div id="recordings-list"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    <script>
+        const supabaseUrl = "https://rstsaezuvmttdjffsukd.supabase.co";
+        const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJzdHNhZXp1dm10dGRqZmZzdWtkIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDI4OTM2NTgsImV4cCI6MjA1ODQ2OTY1OH0.o2tNqMRIwqL_vvkYKH6O4tPyNLZUAhPflFCuoa_HnzE";
+        const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+        async function fetchRecordings() {
+            let { data, error } = await supabase.from('recordings').select('*');
+
+            if (error) {
+                console.error("Error fetching data:", error);
+                return;
+            }
+
+            const recordingsContainer = document.getElementById('recordings-list');
+            recordingsContainer.innerHTML = '';
+
+            data.forEach(recording => {
+                const item = document.createElement('div');
+                item.innerHTML = `
+                    <p><strong>${recording.title}</strong></p>
+                    <audio controls>
+                        <source src="${recording.file_url}" type="audio/mpeg">
+                        Your browser does not support the audio element.
+                    </audio>
+                `;
+                recordingsContainer.appendChild(item);
+            });
+        }
+
+        fetchRecordings();
+    </script>
+</body>
+</html>
